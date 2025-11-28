@@ -10,11 +10,13 @@ Discord Bot 開発用のライブラリ集約リポジトリ
 |-----------|--------|----------|--------|
 | PayPaython_mobile | taka-4602 | MIT License | [GitHub](https://github.com/taka-4602/PayPaython-mobile) / [PyPI](https://pypi.org/project/PayPaython-mobile/) |
 | awswaf | xKiian | MIT License | [GitHub](https://github.com/xKiian/awswaf) |
+| paypaypy | suimin_1729 | MIT License | [Github](https://github.com/suimin-1729/paypaypy) |
 
 ### 使用内容
 
-- **PayPaython_mobile**: 元のコードに WAF 回避機能を追加しました。
-- **awswaf**: 元のコードをそのまま使用しています。
+- **PayPaython_mobile**: こちらを元に AWS WAF 回避機能を追加しました。
+- **awswaf**: 一部参考にしました。
+- **paypaypy**: 一部参考にしました。
 
 ## ライセンス
 
