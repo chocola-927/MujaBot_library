@@ -10,7 +10,7 @@ import itertools
 import tls_client
 
 from .crypto import Crypto
-from typing import Union, Callable, Any
+from typing import Callable, Any
 
 class Fingerprint:
     @staticmethod
@@ -32,7 +32,7 @@ class Fingerprint:
             "webgl_unmasked_renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
             "webgl": [
                 {
-                    "webgl_extensions": "ANGLE_instanced_arrays;EXT_blend_minmax;EXT_clip_control;EXT_color_buffer_half_float;EXT_depth_clamp;EXT_disjoint_timer_query;EXT_float_blend;EXT_frag_depth;EX[...]
+                    "webgl_extensions": "ANGLE_instanced_arrays;EXT_blend_minmax;EXT_clip_control;EXT_color_buffer_half_float;EXT_depth_clamp;EXT_disjoint_timer_query;EXT_float_blend;EXT_frag_depth;EXT_color_buffer_float;EXT_disjoint_timer_query_webgl2;EXT_texture_filter_anisotropic;EXT_frag_depth;WEBGL_color_buffer_float;WEBGL_compressed_texture_s3tc;WEBGL_compressed_texture_s3tc_srgb;WEBGL_debug_renderer_info;WEBGL_debug_shaders;WEBGL_lose_context;OES_element_index_uint;OES_standard_derivatives;OES_texture_float;OES_texture_float_linear;OES_texture_half_float;OES_texture_half_float_linear;OES_vertex_array_object;WEBGL_depth_texture;WEBGL_draw_buffers;ANGLE_instanced_arrays;WEBGL_lose_context;EXT_blend_minmax;EXT_texture_filter_anisotropic;WEBKIT_WEBGL_compressed_texture_pvrtc;WEBKIT_WEBGL_compressed_texture_s3tc;EXT_frag_depth;EXT_shader_texture_lod;EXT_sRGB;OES_standard_derivatives;OES_texture_float;OES_texture_half_float;OES_texture_half_float_linear;OES_element_index_uint;OES_vertex_array_object;WebGL_lose_context;EXT_color_buffer_float;EXT_disjoint_timer_query_webgl2;WEBGL_color_buffer_float;WEBGL_compressed_texture_s3tc;WEBGL_compressed_texture_s3tc_srgb;WEBGL_debug_renderer_info;WEBGL_debug_shaders;WEBGL_lose_context;OES_element_index_uint;OES_standard_derivatives;OES_texture_float;OES_texture_float_linear;OES_texture_half_float;OES_texture_half_float_linear;OES_vertex_array_object;WEBGL_depth_texture;WEBGL_draw_buffers;ANGLE_instanced_arrays",
                     "webgl_extensions_hash": "9cbeeda2b4ce5415b07e1d1e43783a58",
                     "webgl_renderer": "WebKit WebGL",
                     "webgl_vendor": "WebKit",
@@ -220,13 +220,11 @@ class Verify:
     
     @staticmethod
     def mp_verify(input, checksum, difficulty):
-        """
-        mp_verify チャレンジタイプの処理
-        現在は pow と同じ処理を行う（互換性のため）
-        """
+        """mp_verify チャレンジタイプの処理"""
         return Verify.pow(input, checksum, difficulty)
     
-    CHALLENGE_TYPES: dict[str, Callable[[str, str, int], str]] = {
+    # CHALLENGE_TYPES 辞書 - すべて関数参照
+    CHALLENGE_TYPES: dict[str, Callable[[Any, Any, Any], str]] = {
         "h72f957df656e80ba55f5d8ce2e8c7ccb59687dba3bfb273d54b08a261b2f3002": compute_scrypt_nonce,
         "h7b0c470f0cfe3a80a9e26526ad185f484f6817d0832712a4a37a908786a6a67f": pow,
         "ha9faaffd31b4d5ede2a2e19d2d7fd525f66fee61911511960dcbb52d3c48ce25": mp_verify
@@ -299,15 +297,13 @@ class Solver:
 
         challenge_type = inputs["challenge_type"]
         
-        # チャレンジタイプが CHALLENGE_TYPES に存在するか確認
         if challenge_type not in Verify.CHALLENGE_TYPES:
-            raise ValueError(f"未対応のチャレンジタイプ: {challenge_type}")
+            raise ValueError(f"Unsupported challenge type: {challenge_type}")
         
         verify_func = Verify.CHALLENGE_TYPES[challenge_type]
         
-        # verify_func が呼び出し可能か確認
         if not callable(verify_func):
-            raise TypeError(f"チャレンジタイプ {challenge_type} に対応する関数が呼び出し可能ではありません: {type(verify_func)}")
+            raise TypeError(f"verify_func is not callable: {type(verify_func)}")
         
         solution = verify_func(inputs["challenge"]["input"], checksum, inputs["difficulty"])
 
@@ -327,121 +323,29 @@ class Solver:
             "client": "Browser",
             "domain": "www.paypay.ne.jp",
             "metrics": [
-                {
-                    "name": "2",
-                    "value": random.uniform(0, 1),
-                    "unit": "2"
-                },
-                {
-                    "name": "100",
-                    "value": 0,
-                    "unit": "2"
-                },
-                {
-                    "name": "101",
-                    "value": 0,
-                    "unit": "2"
-                },
-                {
-                    "name": "102",
-                    "value": 0,
-                    "unit": "2"
-                },
-                {
-                    "name": "103",
-                    "value": 8,
-                    "unit": "2"
-                },
-                {
-                    "name": "104",
-                    "value": 0,
-                    "unit": "2"
-                },
-                {
-                    "name": "105",
-                    "value": 0,
-                    "unit": "2"
-                },
-                {
-                    "name": "106",
-                    "value": 0,
-                    "unit": "2"
-                },
-                {
-                    "name": "107",
-                    "value": 0,
-                    "unit": "2"
-                },
-                {
-                    "name": "108",
-                    "value": 1,
-                    "unit": "2"
-                },
-                {
-                    "name": "undefined",
-                    "value": 0,
-                    "unit": "2"
-                },
-                {
-                    "name": "110",
-                    "value": 0,
-                    "unit": "2"
-                },
-                {
-                    "name": "111",
-                    "value": 2,
-                    "unit": "2"
-                },
-                {
-                    "name": "112",
-                    "value": 0,
-                    "unit": "2"
-                },
-                {
-                    "name": "undefined",
-                    "value": 0,
-                    "unit": "2"
-                },
-                {
-                    "name": "3",
-                    "value": 4,
-                    "unit": "2"
-                },
-                {
-                    "name": "7",
-                    "value": 0,
-                    "unit": "4"
-                },
-                {
-                    "name": "1",
-                    "value": random.uniform(10, 20),
-                    "unit": "2"
-                },
-                {
-                    "name": "4",
-                    "value": 36.5,
-                    "unit": "2"
-                },
-                {
-                    "name": "5",
-                    "value": random.uniform(0, 1),
-                    "unit": "2"
-                },
-                {
-                    "name": "6",
-                    "value": random.uniform(50, 60),
-                    "unit": "2"
-                },
-                {
-                    "name": "0",
-                    "value": random.uniform(130, 140),
-                    "unit": "2"
-                },
-                {
-                    "name": "8",
-                    "value": 1,
-                    "unit": "4"
-                }
+                {"name": "2", "value": random.uniform(0, 1), "unit": "2"},
+                {"name": "100", "value": 0, "unit": "2"},
+                {"name": "101", "value": 0, "unit": "2"},
+                {"name": "102", "value": 0, "unit": "2"},
+                {"name": "103", "value": 8, "unit": "2"},
+                {"name": "104", "value": 0, "unit": "2"},
+                {"name": "105", "value": 0, "unit": "2"},
+                {"name": "106", "value": 0, "unit": "2"},
+                {"name": "107", "value": 0, "unit": "2"},
+                {"name": "108", "value": 1, "unit": "2"},
+                {"name": "undefined", "value": 0, "unit": "2"},
+                {"name": "110", "value": 0, "unit": "2"},
+                {"name": "111", "value": 2, "unit": "2"},
+                {"name": "112", "value": 0, "unit": "2"},
+                {"name": "undefined", "value": 0, "unit": "2"},
+                {"name": "3", "value": 4, "unit": "2"},
+                {"name": "7", "value": 0, "unit": "4"},
+                {"name": "1", "value": random.uniform(10, 20), "unit": "2"},
+                {"name": "4", "value": 36.5, "unit": "2"},
+                {"name": "5", "value": random.uniform(0, 1), "unit": "2"},
+                {"name": "6", "value": random.uniform(50, 60), "unit": "2"},
+                {"name": "0", "value": random.uniform(130, 140), "unit": "2"},
+                {"name": "8", "value": 1, "unit": "4"}
             ],
             "goku_props": goku_props
         }
